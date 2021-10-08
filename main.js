@@ -134,8 +134,17 @@ async function fetchSnapshotList() {
   //   }
   return result;
 }
+// item needs to be array with an id, basename
+// legendaries need to have a baseid + -ilvl
 
-async function getItemState(realm = "", item = "") {
+// ex 178296-210 is a SG Ring 210 ilvl
+//  "https://oribos.exchange/data/3676/238/178926-210.bin";
+
+// ex 178296-210 is a SG Ring 210 ilvl
+// https://oribos.exchange/data/3676/115/173171.bin;
+
+async function getItemState(realm = "", item = { id: "", basename: "" }) {
+  const ITEM_PET_CAGE = FALSE;
   // let basename = Items.stringifyKey({
   //     itemId: item.id,
   //     itemLevel: item.bonusLevel,
@@ -149,15 +158,18 @@ async function getItemState(realm = "", item = "") {
   //     item.id === ITEM_PET_CAGE ? (item.bonusLevel & 0xFF) : (item.id & 0xFF),
   //     basename + '.bin'
   // ].filter(v => v !== '').join('/');
-  // const url = [
-  //     'data',  //https://oribos.exchange/data <-
-  //     'cached', // / cached
-  //     realm.connectedId, // connectedId????
-  //     item.id === ITEM_PET_CAGE ? 'pet' : '',  // '' since its not a pet
-  //     item.id === ITEM_PET_CAGE ? (item.bonusLevel & 0xFF) : (item.id & 0xFF),  // item.id /238/
-  //     basename + '.bin' // itemId 178926-210 ''
-  // ].filter(v => v !== '').join('/');
+  const url = [
+    "data", //https://oribos.exchange/data <-
+    "cached", // / cached
+    realm.connectedId, // connectedId????
+    item.id === ITEM_PET_CAGE ? "pet" : "", // '' since its not a pet
+    item.id === ITEM_PET_CAGE ? item.bonusLevel & 0xff : item.id & 0xff, // item.id /238/
+    basename + ".bin", // itemId 178926-210 ''
+  ]
+    .filter((v) => v !== "")
+    .join("/");
   const COPPER_SILVER = 100;
+
   const url = "https://oribos.exchange/data/3676/238/178926-210.bin";
   const response = await fetch(url, { mode: "same-origin" });
   if (!response.ok) {
@@ -350,5 +362,5 @@ async function getItemState(realm = "", item = "") {
 
   return result;
 }
-
-const f = getItemState();
+item = {};
+const f = getItemState(item);
